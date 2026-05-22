@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estv - CV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            neutral: {
+              50: '#fafafa',
+              100: '#f5f5f5',
+              200: '#e5e5e5',
+              300: '#d4d4d4',
+              400: '#a3a3a3',
+              500: '#737373',
+              600: '#525252',
+              700: '#404040',
+              800: '#262626',
+              900: '#171717',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .timeline-dot::before {
+      content: '';
+      position: absolute;
+      left: -29px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #22c55e;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .animate-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-neutral-900 font-sans antialiased">
+  <main id="cv-content" class="max-w-3xl mx-auto px-6 py-12">
+
+    <header class="mb-16 animate-on-scroll">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-4xl font-bold text-neutral-900" id="name">Loading...</h1>
+        <button
+          onclick="downloadPDF()"
+          class="no-print flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors border border-neutral-200 hover:border-neutral-300"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Download PDF
+        </button>
+      </div>
+      <p class="text-xl text-neutral-500 mb-4" id="title">Loading...</p>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-neutral-500" id="contact-info">
+        <span id="location"></span>
+        <span class="text-neutral-300">|</span>
+        <a href="#" id="email-link" class="hover:text-green-600 transition-colors"></a>
+      </div>
+      <div class="flex flex-wrap gap-3 mt-4" id="social-links"></div>
+    </header>
+
+    <section class="mb-16 animate-on-scroll">
+      <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-4">About</h2>
+      <p class="text-neutral-600 leading-relaxed" id="about-text">Loading...</p>
+    </section>
+
+    <section class="mb-16 animate-on-scroll">
+      <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-6">Experience</h2>
+      <div class="border-l-2 border-neutral-200 pl-6 space-y-8" id="experience-list"></div>
+    </section>
+
+    <section class="mb-16 animate-on-scroll">
+      <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-6">Skills</h2>
+      <div class="space-y-4" id="skills-list"></div>
+    </section>
+
+    <section class="mb-16 animate-on-scroll">
+      <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-6">Projects</h2>
+      <div class="grid gap-4" id="projects-list"></div>
+    </section>
+
+    <section class="mb-16 animate-on-scroll">
+      <h2 class="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-6">Education</h2>
+      <div class="space-y-4" id="education-list"></div>
+    </section>
+
+    <footer class="animate-on-scroll pt-8 border-t border-neutral-200">
+      <p class="text-sm text-neutral-400 text-center" id="footer-text"></p>
+    </footer>
+  </main>
+
+  <script>
+    let configData = null;
+
+    async function loadConfig() {
+      try {
+        const response = await fetch('config.json');
+        configData = await response.json();
+        renderContent(configData);
+      } catch (error) {
+        console.error('Failed to load config:', error);
+        document.getElementById('name').textContent = 'Error loading config.json';
+      }
+    }
+
+    function renderContent(config) {
+      const { personal, about, experience, skills, projects, education } = config;
+
+      document.getElementById('name').textContent = personal.name;
+      document.getElementById('title').textContent = personal.title;
+      document.getElementById('location').textContent = personal.location;
+      document.getElementById('email-link').href = `mailto:${personal.email}`;
+      document.getElementById('email-link').textContent = personal.email;
+      document.getElementById('about-text').textContent = about;
+
+      const socialLinks = document.getElementById('social-links');
+      personal.links.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'flex items-center gap-1 text-sm text-neutral-500 hover:text-green-600 transition-colors';
+        a.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          ${link.name}
+        `;
+        socialLinks.appendChild(a);
+      });
+
+      const experienceList = document.getElementById('experience-list');
+      experience.forEach(exp => {
+        const div = document.createElement('div');
+        div.className = 'relative timeline-dot';
+        div.innerHTML = `
+          <div class="flex items-baseline justify-between mb-2">
+            <h3 class="text-lg font-semibold text-neutral-900">${exp.role}</h3>
+            <span class="text-sm text-neutral-400">${exp.period}</span>
+          </div>
+          <p class="text-green-600 font-medium mb-2">${exp.company}</p>
+          <p class="text-neutral-600 mb-3">${exp.description}</p>
+          ${exp.highlights ? `
+            <ul class="list-disc list-inside text-sm text-neutral-500 space-y-1">
+              ${exp.highlights.map(h => `<li>${h}</li>`).join('')}
+            </ul>
+          ` : ''}
+        `;
+        experienceList.appendChild(div);
+      });
+
+      const skillsList = document.getElementById('skills-list');
+      skills.forEach(skill => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <p class="text-sm font-medium text-neutral-400 mb-2">${skill.category}</p>
+          <div class="flex flex-wrap gap-2">
+            ${skill.items.map(item => `
+              <span class="px-3 py-1 bg-neutral-50 text-neutral-700 text-sm rounded-full border border-neutral-200 hover:border-green-300 hover:text-green-600 transition-colors cursor-default">${item}</span>
+            `).join('')}
+          </div>
+        `;
+        skillsList.appendChild(div);
+      });
+
+      const projectsList = document.getElementById('projects-list');
+      projects.forEach(project => {
+        const div = document.createElement('div');
+        div.className = 'p-4 border border-neutral-200 rounded-lg hover:border-green-300 transition-colors';
+        div.innerHTML = `
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-semibold text-neutral-900">${project.name}</h3>
+            <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:text-green-700 transition-colors no-print">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+          <p class="text-sm text-neutral-600 mb-3">${project.description}</p>
+          <div class="flex flex-wrap gap-1">
+            ${project.tech.map(t => `<span class="text-xs px-2 py-0.5 bg-neutral-100 text-neutral-500 rounded">${t}</span>`).join('')}
+          </div>
+        `;
+        projectsList.appendChild(div);
+      });
+
+      const educationList = document.getElementById('education-list');
+      education.forEach(edu => {
+        const div = document.createElement('div');
+        div.className = 'border-l-2 border-green-500 pl-4';
+        div.innerHTML = `
+          <div class="flex items-baseline justify-between mb-1">
+            <h3 class="font-semibold text-neutral-900">${edu.degree}</h3>
+            <span class="text-sm text-neutral-400">${edu.period}</span>
+          </div>
+          <p class="text-green-600 font-medium">${edu.institution}</p>
+          ${edu.description ? `<p class="text-sm text-neutral-500 mt-1">${edu.description}</p>` : ''}
+        `;
+        educationList.appendChild(div);
+      });
+
+      const year = new Date().getFullYear();
+      document.getElementById('footer-text').textContent = `${year} ${personal.name}. Built with care.`;
+    }
+
+    function setupScrollAnimations() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    async function downloadPDF() {
+      const element = document.getElementById('cv-content');
+      const name = configData?.personal?.name || 'cv';
+
+      const opt = {
+        margin: 0,
+        filename: `${name.toLowerCase().replace(/\s+/g, '-')}-cv.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+      } catch (error) {
+        console.error('PDF generation failed:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadConfig();
+      setupScrollAnimations();
+    });
+  </script>
+</body>
+</html>

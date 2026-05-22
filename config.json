@@ -1,0 +1,97 @@
+{
+  "personal": {
+    "name": "Your Name",
+    "title": "Software Engineer",
+    "location": "France",
+    "email": "contact@about.estv.fr",
+    "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/"
+      },
+      {
+        "name": "LinkedIn",
+        "url": "https://linkedin.com/in/"
+      },
+      {
+        "name": "Blog",
+        "url": "https://estv.fr"
+      }
+    ]
+  },
+  "about": "A passionate software engineer with expertise in backend development, system architecture, and building efficient, scalable solutions. I enjoy working with Rust, TypeScript, and modern DevOps practices.",
+  "experience": [
+    {
+      "company": "Company Name",
+      "role": "Senior Software Engineer",
+      "period": "2022 - Present",
+      "description": "Leading backend development and system architecture.",
+      "highlights": [
+        "Designed and implemented microservices architecture serving 1M+ users",
+        "Reduced API response times by 60% through optimization",
+        "Mentored junior developers and established coding standards"
+      ]
+    },
+    {
+      "company": "Previous Company",
+      "role": "Software Engineer",
+      "period": "2019 - 2022",
+      "description": "Full-stack development with focus on backend systems.",
+      "highlights": [
+        "Built RESTful APIs using Rust and TypeScript",
+        "Implemented CI/CD pipelines reducing deployment time by 70%",
+        "Contributed to open-source projects"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "category": "Languages",
+      "items": ["Rust", "TypeScript", "Go", "Python"]
+    },
+    {
+      "category": "Frameworks",
+      "items": ["Axum", "React", "Tailwind CSS", "Next.js"]
+    },
+    {
+      "category": "Infrastructure",
+      "items": ["Docker", "Kubernetes", "Linux", "Nginx", "Caddy"]
+    },
+    {
+      "category": "Databases",
+      "items": ["PostgreSQL", "SQLite", "Redis"]
+    },
+    {
+      "category": "Tools",
+      "items": ["Git", "GitHub Actions", "Make", "Neovim"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "home-estv",
+      "description": "A service status monitoring dashboard with real-time status updates",
+      "tech": ["Rust", "TypeScript", "Tailwind CSS"],
+      "url": "https://home.estv.fr"
+    },
+    {
+      "name": "system-estv",
+      "description": "A minimal system monitoring dashboard for VPS resources",
+      "tech": ["Rust", "Axum", "Tailwind CSS"],
+      "url": "https://system.estv.fr"
+    },
+    {
+      "name": "todo-estv",
+      "description": "A full-stack todo application with projects and tags",
+      "tech": ["Go", "React", "SQLite"],
+      "url": "https://todo.estv.fr"
+    }
+  ],
+  "education": [
+    {
+      "institution": "University Name",
+      "degree": "Master's in Computer Science",
+      "period": "2015 - 2019",
+      "description": "Specialized in distributed systems and software engineering"
+    }
+  ]
+}

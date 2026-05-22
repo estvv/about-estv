@@ -1,0 +1,16 @@
+services:
+  web:
+    image: nginx:alpine
+    container_name: about-estv
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - caddy_net
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+networks:
+  caddy_net:
+    external: true
